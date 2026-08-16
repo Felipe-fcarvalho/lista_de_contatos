@@ -20,7 +20,7 @@ const contatoSlice = createSlice({
         (c) => c.email.toLowerCase() === action.payload.email.toLowerCase()
       )
       if (jaExisteContato) {
-        alert('Já existe um contato com esse e-amil')
+        alert('Já existe um contato com esse e-mail')
         return
       }
       const ultimo = state.itens[state.itens.length - 1]
