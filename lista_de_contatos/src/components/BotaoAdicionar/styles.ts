@@ -15,4 +15,10 @@ export const Circulo = styled(Link)`
   align-items: center;
   font-size: 40px;
   text-decoration: none;
+
+  &:hover {
+    opacity: 0.9;
+    outline: 1px solid ${({ theme }) => theme.color.neutralSecondary};
+    box-shadow: 2px 2px 0 rgb(0, 0, 0);
+  }
 `

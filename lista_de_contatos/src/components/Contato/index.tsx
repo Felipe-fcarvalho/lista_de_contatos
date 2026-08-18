@@ -1,9 +1,11 @@
-import { useState, useEffect, type ChangeEvent, type SubmitEvent } from 'react'
+import { useState, type ChangeEvent, type SubmitEvent } from 'react'
 import { useAppDispatch } from '../../store/hooks'
-import { remover, editar } from '../../store/reducers/contatos'
+import { editar, remover } from '../../store/reducers/contatos'
 import type ContatoModel from '../../models/Contato'
 import * as Icons from '../../assets/icons'
 import * as S from './styles'
+import { IMaskInput } from 'react-imask'
+import { validarEmail, validarNome, validarTelefone } from '../../utils/validacoes'
 
 type Props = ContatoModel
 
@@ -11,21 +13,6 @@ type FormState = {
   nome: string
   email: string
   telefone: string
-}
-
-const somenteNumeros = (valor: string) => valor.replace(/\D/g, '')
-
-const validarNome = (nome: string) => {
-  const nomeValidado = nome.trim()
-  return nomeValidado.length >= 6 && nomeValidado.includes(' ')
-}
-
-const ValidarTelefone = (telefone: string) => {
-  return somenteNumeros(telefone).length === 11
-}
-
-const ValidarEmail = (email: string) => {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 }
 
 export const Contato = ({ id, nome, email, telefone }: Props) => {
@@ -36,10 +23,6 @@ export const Contato = ({ id, nome, email, telefone }: Props) => {
   const [erros, setErros] = useState<Partial<FormState>>({})
 
   const [form, setForm] = useState<FormState>({ nome, email, telefone })
-
-  useEffect(() => {
-    setForm({ nome, email, telefone })
-  }, [nome, email, telefone])
 
   function atualizarCampo(campo: keyof FormState) {
     return (e: ChangeEvent<HTMLInputElement>) => {
@@ -60,14 +43,14 @@ export const Contato = ({ id, nome, email, telefone }: Props) => {
     const novosErros: Partial<FormState> = {}
 
     if (!validarNome(form.nome)) {
-      novosErros.email = 'Digite nome e sobrenome'
+      novosErros.nome = 'Digite nome e sobrenome'
     }
 
-    if (!ValidarEmail(form.email)) {
+    if (!validarEmail(form.email)) {
       novosErros.email = 'Digite um e-mail válido'
     }
 
-    if (!ValidarTelefone(form.telefone)) {
+    if (!validarTelefone(form.telefone)) {
       novosErros.telefone = 'Digite um telefone completo'
     }
 
@@ -113,50 +96,63 @@ export const Contato = ({ id, nome, email, telefone }: Props) => {
       />
       {estaEditando ? (
         <>
-          <S.Campo>
+          <S.Celula>
             <S.Input
-              value={nome}
+              value={form.nome}
               onChange={atualizarCampo('nome')}
               type="text"
+              placeholder="Nome completo"
             />
             {erros.nome && <S.Erro>{erros.nome}</S.Erro>}
+          </S.Celula>
+          <S.Celula>
             <S.Input
-              value={email}
+              value={form.email}
               onChange={atualizarCampo('email')}
-              type="text"
+              type="email"
+              placeholder="Seu.email@email.com"
             />
             {erros.email && <S.Erro>{erros.email}</S.Erro>}
+          </S.Celula>
+          <S.Celula>
             <S.Input
-              value={telefone}
-              onChange={atualizarCampo('telefone')}
-              type="text"
+              as={IMaskInput}
+              mask="(00) 00000-0000"
+              value={form.telefone}
+              onAccept={(value: string) =>
+                setForm((prev) => ({ ...prev, telefone: value }))
+              }
+              type="tel"
+              placeholder="(11) 91234-5678"
             />
             {erros.telefone && <S.Erro>{erros.telefone}</S.Erro>}
-          </S.Campo>
+          </S.Celula>
           <S.Acoes>
-            <S.BotaoTexto type="submit">Salvar</S.BotaoTexto>
-            <S.BotaoTexto type="button" onClick={cancelarEdicao}>
-              Cancelar
-            </S.BotaoTexto>
+            <S.BotaoSalvar type="submit" aria-label="Salvar edição">&#10003;</S.BotaoSalvar>
+            <S.BotaoCancelar type="button" aria-label="Cancelar edição" onClick={cancelarEdicao}>
+              &times;
+            </S.BotaoCancelar>
           </S.Acoes>
         </>
       ) : (
         <>
-          <S.Nome>{nome}</S.Nome>
-          <S.Texto>{email}</S.Texto>
-          <S.Texto>{telefone}</S.Texto>
+          <S.Celula>{nome}</S.Celula>
+          <S.Celula>{email}</S.Celula>
+          <S.Celula>{telefone}</S.Celula>
           <S.Acoes>
             <S.BotaoIcone
               type="button"
               className="editar"
               onClick={iniciarEdicao}
             >
-              <img
-                src={Icons.Editar}
-                alt="ícone editar contato"
-                width={16}
-                height={16}
-              />
+              <abbr title="Editar">
+                <img
+                  src={Icons.Editar}
+                  alt="ícone editar contato"
+                  width={16}
+                  height={16}
+                />
+              </abbr>
             </S.BotaoIcone>
             {estaSelecionado && (
               <S.BotaoIcone
@@ -178,3 +174,5 @@ export const Contato = ({ id, nome, email, telefone }: Props) => {
     </S.Linha>
   )
 }
+
+

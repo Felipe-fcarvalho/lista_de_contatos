@@ -1,12 +1,13 @@
 import styled from 'styled-components'
 
 export const Container = styled.div`
+  margin: 0 auto;
   max-width: 700px;
   padding: 32px 16px;
   position: relative;
 `
 
-export const Title = styled.div`
+export const Title = styled.h1`
   width: 100%;
   font-family: ${({ theme }) => theme.font.title};
   font-weight: bold;

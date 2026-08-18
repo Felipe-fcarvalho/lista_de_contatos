@@ -1,38 +1,33 @@
 import { type SubmitEvent, useState } from 'react'
-import { useDispatch } from 'react-redux'
+import { useAppDispatch } from '../../store/hooks'
 import { useNavigate } from 'react-router-dom'
 import { IMaskInput } from 'react-imask'
 import { cadastrar } from '../../store/reducers/contatos'
 import * as S from './styles'
 import * as Icones from '../../assets/icons'
+import { filtrarNome, validarEmail, validarNome, validarTelefone } from '../../utils/validacoes'
 
-const somenteNumeros = (valor: string) => valor.replace(/\D/g, '')
-
-const validarNome = (nome: string) => {
-  const nomeLimpo = nome.trim()
-  return nomeLimpo.length >= 6 && nomeLimpo.includes(' ')
+type Erros = {
+  nome: string
+  email: string
+  telefone: string
 }
 
-const validarTelefone = (telefone: string) =>
-  somenteNumeros(telefone).length === 11
-
-const validarEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
-
 const Formulario = () => {
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
   const navigate = useNavigate()
 
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [telefone, setTelefone] = useState('')
-  const [erros, setErros] = useState({
+  const [erros, setErros] = useState<Erros>({
     nome: '',
     email: '',
     telefone: '',
   })
 
   function validar() {
-    const inputErro = {
+    const inputErro: Erros = {
       nome: '',
       email: '',
       telefone: '',
@@ -54,7 +49,7 @@ const Formulario = () => {
     return !inputErro.nome && !inputErro.email && !inputErro.telefone
   }
 
-  function cadastrarContato(e: SubmitEvent) {
+  function cadastrarContato(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault()
 
     if (!validar()) return
@@ -85,7 +80,7 @@ const Formulario = () => {
           <S.Input
             value={nome}
             onChange={({ target }) =>
-              setNome(target.value.replace(/[0-9]/g, ''))
+              setNome(filtrarNome(target.value))
             }
             type="text"
             placeholder="Nome completo"
@@ -108,9 +103,10 @@ const Formulario = () => {
           <S.Icone src={Icones.Telefone} alt="ícone de telefone" />
           <S.Input
             as={IMaskInput}
-            mask="(00) 0000-0000"
+            mask="(00) 00000-0000"
             value={telefone}
             onAccept={(value: string) => setTelefone(value)}
+            type='tel'
             placeholder="(11) 91234-5678"
           />
         </S.Label>
