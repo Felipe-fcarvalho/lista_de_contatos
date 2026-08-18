@@ -5,7 +5,11 @@ import type ContatoModel from '../../models/Contato'
 import * as Icons from '../../assets/icons'
 import * as S from './styles'
 import { IMaskInput } from 'react-imask'
-import { validarEmail, validarNome, validarTelefone } from '../../utils/validacoes'
+import {
+  validarEmail,
+  validarNome,
+  validarTelefone,
+} from '../../utils/validacoes'
 
 type Props = ContatoModel
 
@@ -128,8 +132,14 @@ export const Contato = ({ id, nome, email, telefone }: Props) => {
             {erros.telefone && <S.Erro>{erros.telefone}</S.Erro>}
           </S.Celula>
           <S.Acoes>
-            <S.BotaoSalvar type="submit" aria-label="Salvar edição">&#10003;</S.BotaoSalvar>
-            <S.BotaoCancelar type="button" aria-label="Cancelar edição" onClick={cancelarEdicao}>
+            <S.BotaoSalvar type="submit" aria-label="Salvar edição">
+              &#10003;
+            </S.BotaoSalvar>
+            <S.BotaoCancelar
+              type="button"
+              aria-label="Cancelar edição"
+              onClick={cancelarEdicao}
+            >
               &times;
             </S.BotaoCancelar>
           </S.Acoes>
@@ -145,14 +155,12 @@ export const Contato = ({ id, nome, email, telefone }: Props) => {
               className="editar"
               onClick={iniciarEdicao}
             >
-              <abbr title="Editar">
-                <img
-                  src={Icons.Editar}
-                  alt="ícone editar contato"
-                  width={16}
-                  height={16}
-                />
-              </abbr>
+              <img
+                src={Icons.Editar}
+                alt="ícone editar contato"
+                width={16}
+                height={16}
+              />
             </S.BotaoIcone>
             {estaSelecionado && (
               <S.BotaoIcone
@@ -174,5 +182,3 @@ export const Contato = ({ id, nome, email, telefone }: Props) => {
     </S.Linha>
   )
 }
-
-
